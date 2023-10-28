@@ -3,17 +3,17 @@ package main
 import (
 	"log"
 
-	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day01"
+	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day02"
 	"github.com/jbweber/advent-of-code-go/internal/probleminputs"
 )
 
 func main() {
-	input, err := probleminputs.GetInput(2021, 1)
+	input, err := probleminputs.GetInput(2021, 2)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	result1, result2, err := day01.Execute(input)
+	result1, result2, err := day02.Execute(input)
 	if err != nil {
 		log.Fatal(err)
 	}
