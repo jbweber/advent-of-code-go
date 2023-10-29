@@ -6,15 +6,14 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day07"
-
-	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day06"
-
+	year2015day01 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day01"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day01"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day02"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day03"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day04"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day05"
+	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day06"
+	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day07"
 	"github.com/jbweber/advent-of-code-go/internal/probleminputs"
 )
 
@@ -63,6 +62,9 @@ func execute(input string, year, day int) {
 	var err error
 
 	switch fmt.Sprintf("%d-%d", year, day) {
+	case "2015-1":
+		result1, result2, err = year2015day01.Execute(input)
+		break
 	case "2021-1":
 		result1, result2, err = day01.Execute(input)
 		break
