@@ -6,11 +6,11 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day04"
-
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day01"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day02"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day03"
+	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day04"
+	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day05"
 	"github.com/jbweber/advent-of-code-go/internal/probleminputs"
 )
 
@@ -70,6 +70,8 @@ func execute(input string, year, day int) {
 		break
 	case "2021-4":
 		result1, result2, err = day04.Execute(input)
+	case "2021-5":
+		result1, result2, err = day05.Execute(input)
 	default:
 		log.Fatalf("unknown year / day combo %d-%d", year, day)
 	}
