@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day06"
 	"log"
 	"os"
 	"strconv"
@@ -70,8 +71,13 @@ func execute(input string, year, day int) {
 		break
 	case "2021-4":
 		result1, result2, err = day04.Execute(input)
+		break
 	case "2021-5":
 		result1, result2, err = day05.Execute(input)
+		break
+	case "2021-6":
+		result1, result2, err = day06.Execute(input)
+		break
 	default:
 		log.Fatalf("unknown year / day combo %d-%d", year, day)
 	}
