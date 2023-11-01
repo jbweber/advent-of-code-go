@@ -15,6 +15,7 @@ import (
 	year2015day07 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day07"
 	year2015day08 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day08"
 	year2015day09 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day09"
+	year2015day10 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day10"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day01"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day02"
 	"github.com/jbweber/advent-of-code-go/internal/problem/2021/day03"
@@ -96,6 +97,9 @@ func execute(input string, year, day int) {
 		break
 	case "2015-9":
 		result1, result2, err = year2015day09.Execute(input)
+		break
+	case "2015-10":
+		result1, result2, err = year2015day10.Execute(input)
 		break
 	case "2021-1":
 		result1, result2, err = day01.Execute(input)
