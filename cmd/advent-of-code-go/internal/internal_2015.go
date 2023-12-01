@@ -18,6 +18,14 @@ import (
 	year2015day14 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day14"
 	year2015day16 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day16"
 	year2015day17 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day17"
+	year2015day18 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day18"
+	year2015day19 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day19"
+	year2015day20 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day20"
+	year2015day21 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day21"
+	year2015day22 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day22"
+	year2015day23 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day23"
+	year2015day24 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day24"
+	year2015day25 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day25"
 )
 
 func Execute2015(input string, year, day int) (result1 string, result2 string, err error) {
@@ -64,6 +72,30 @@ func Execute2015(input string, year, day int) (result1 string, result2 string, e
 		break
 	case "2015-17":
 		result1, result2, err = year2015day17.Execute(input)
+		break
+	case "2015-18":
+		result1, result2, err = year2015day18.Execute(input)
+		break
+	case "2015-19":
+		result1, result2, err = year2015day19.Execute(input)
+		break
+	case "2015-20":
+		result1, result2, err = year2015day20.Execute(input)
+		break
+	case "2015-21":
+		result1, result2, err = year2015day21.Execute(input)
+		break
+	case "2015-22":
+		result1, result2, err = year2015day22.Execute(input)
+		break
+	case "2015-23":
+		result1, result2, err = year2015day23.Execute(input)
+		break
+	case "2015-24":
+		result1, result2, err = year2015day24.Execute(input)
+		break
+	case "2015-25":
+		result1, result2, err = year2015day25.Execute(input)
 		break
 	default:
 		log.Fatalf("unknown year / day combo %d-%d", year, day)
