@@ -1,6 +1,11 @@
 package day17
 
-import "github.com/jbweber/advent-of-code-go/internal"
+import (
+	"strconv"
+	"strings"
+
+	"github.com/jbweber/advent-of-code-go/internal"
+)
 
 func Execute(input string) (string, string, error) {
 	result1, err := part1(input)
@@ -17,9 +22,22 @@ func Execute(input string) (string, string, error) {
 }
 
 func part1(input string) (string, error) {
+	//containers := parse(input)
+
 	return "", nil
 }
 
 func part2(input string) (string, error) {
 	return "", nil
+}
+
+func parse(in string) []int {
+	var result []int
+
+	for _, i := range strings.Split(in, "\n") {
+		v, _ := strconv.Atoi(i)
+		result = append(result, v)
+	}
+
+	return result
 }

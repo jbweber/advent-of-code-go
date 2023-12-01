@@ -17,6 +17,7 @@ import (
 	year2015day12 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day12"
 	year2015day14 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day14"
 	year2015day16 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day16"
+	year2015day17 "github.com/jbweber/advent-of-code-go/internal/problem/2015/day17"
 )
 
 func Execute2015(input string, year, day int) (result1 string, result2 string, err error) {
@@ -60,6 +61,9 @@ func Execute2015(input string, year, day int) (result1 string, result2 string, e
 		break
 	case "2015-16":
 		result1, result2, err = year2015day16.Execute(input)
+		break
+	case "2015-17":
+		result1, result2, err = year2015day17.Execute(input)
 		break
 	default:
 		log.Fatalf("unknown year / day combo %d-%d", year, day)
