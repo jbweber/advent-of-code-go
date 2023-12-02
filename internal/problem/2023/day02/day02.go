@@ -105,19 +105,19 @@ func parse2(line string) int {
 			cf := strings.Fields(cube)
 			num, _ := strconv.Atoi(cf[0])
 			if cf[1] == "red" {
-				if minRed == -1 || num > minRed {
+				if num > minRed {
 					minRed = num
 				}
 			}
 
 			if cf[1] == "green" {
-				if minGreen == -1 || num > minGreen {
+				if num > minGreen {
 					minGreen = num
 				}
 			}
 
 			if cf[1] == "blue" {
-				if minBlue == -1 || num > minBlue {
+				if num > minBlue {
 					minBlue = num
 				}
 			}
