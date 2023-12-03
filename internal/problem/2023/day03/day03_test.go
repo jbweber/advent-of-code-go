@@ -84,7 +84,7 @@ func TestIsAdjacent(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			r := IsAdjacent(tc.input, tc.x, tc.y)
+			r, _, _, _ := IsAdjacent(tc.input, tc.x, tc.y)
 			if r != tc.is {
 				t.Fail()
 			}

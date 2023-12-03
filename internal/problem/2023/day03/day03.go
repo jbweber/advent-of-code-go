@@ -38,7 +38,7 @@ func part1(input string) (string, error) {
 				// check adjacent
 				if !adjacent {
 
-					adjacent = IsAdjacent(data, j, i)
+					adjacent, _, _, _ = IsAdjacent(data, j, i)
 				}
 				if j+1 != len(data[i]) {
 					continue
@@ -46,7 +46,6 @@ func part1(input string) (string, error) {
 			}
 
 			if inDigit == true {
-				fmt.Println(num, adjacent)
 
 				if adjacent {
 					v, _ := strconv.Atoi(num)
@@ -64,16 +63,67 @@ func part1(input string) (string, error) {
 }
 
 func part2(input string) (string, error) {
-	return "", nil
+	data := strings.Split(input, "\n")
+	gears := map[string][]int{}
+	for i := 0; i < len(data); i++ {
+		adjacent := false
+		inDigit := false
+		gear := false
+		gearX := -1
+		gearY := -1
+		num := ""
+		for j := 0; j < len(data[i]); j++ {
+			if unicode.IsDigit(rune(data[i][j])) {
+				inDigit = true
+				num += string(data[i][j])
+
+				// check adjacent
+				if !adjacent {
+					adjacent, gear, gearX, gearY = IsAdjacent(data, j, i)
+
+				}
+				if j+1 != len(data[i]) {
+					continue
+				}
+			}
+
+			if inDigit == true {
+				if adjacent && gear {
+					v, _ := strconv.Atoi(num)
+					si, ok := gears[fmt.Sprintf("%d-%d", gearX, gearY)]
+					if !ok {
+						gears[fmt.Sprintf("%d-%d", gearX, gearY)] = []int{v}
+					} else {
+						gears[fmt.Sprintf("%d-%d", gearX, gearY)] = append(si, v)
+					}
+				}
+
+				adjacent = false
+				inDigit = false
+				gear = false
+				gearX = -1
+				gearY = -1
+				num = ""
+			}
+		}
+	}
+
+	total := 0
+	for _, v := range gears {
+		if len(v) == 2 {
+			total += (v[0] * v[1])
+		}
+	}
+
+	return fmt.Sprint(total), nil
 }
 
-func IsAdjacent(data []string, x, y int) bool {
+func IsAdjacent(data []string, x, y int) (bool, bool, int, int) {
 	// x,y+1
 	if y < len(data)-1 {
 		val := data[y+1][x]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x, y + 1
 		}
 	}
 
@@ -81,8 +131,7 @@ func IsAdjacent(data []string, x, y int) bool {
 	if x > 0 {
 		val := data[y][x-1]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x - 1, y
 		}
 	}
 
@@ -90,8 +139,7 @@ func IsAdjacent(data []string, x, y int) bool {
 	if x < len(data[y])-1 {
 		val := data[y][x+1]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x + 1, y
 		}
 	}
 
@@ -99,8 +147,7 @@ func IsAdjacent(data []string, x, y int) bool {
 	if y > 0 {
 		val := data[y-1][x]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x, y - 1
 		}
 	}
 
@@ -108,8 +155,7 @@ func IsAdjacent(data []string, x, y int) bool {
 	if y < len(data)-1 && x < len(data[y])-1 {
 		val := data[y+1][x+1]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x + 1, y + 1
 		}
 	}
 
@@ -117,8 +163,7 @@ func IsAdjacent(data []string, x, y int) bool {
 	if y < len(data)-1 && x > 0 {
 		val := data[y+1][x-1]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x - 1, y + 1
 		}
 	}
 
@@ -126,8 +171,7 @@ func IsAdjacent(data []string, x, y int) bool {
 	if y > 0 && x < len(data[y])-1 {
 		val := data[y-1][x+1]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x + 1, y - 1
 		}
 	}
 
@@ -135,10 +179,9 @@ func IsAdjacent(data []string, x, y int) bool {
 	if y > 0 && x > 0 {
 		val := data[y-1][x-1]
 		if !unicode.IsDigit(rune(val)) && val != '.' {
-			fmt.Println(string(val))
-			return true
+			return true, val == '*', x - 1, y - 1
 		}
 	}
 
-	return false
+	return false, false, 0, 0
 }
