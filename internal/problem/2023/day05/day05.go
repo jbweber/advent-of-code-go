@@ -27,7 +27,8 @@ func part1(input string) (string, error) {
 
 	var locs []int
 	for _, seed := range seeds {
-		locs = append(locs, h.ToLocation(seed))
+		s, _ := strconv.Atoi(seed)
+		locs = append(locs, h.ToLocation(s))
 	}
 
 	lowest := -1
@@ -41,7 +42,24 @@ func part1(input string) (string, error) {
 }
 
 func part2(input string) (string, error) {
-	return "", nil
+	seeds, h := parse(input)
+
+	minLoc := -1
+	for i := 0; i < len(seeds); i += 2 {
+		start, _ := strconv.Atoi(seeds[i])
+		count, _ := strconv.Atoi(seeds[i+1])
+		for j := start; j < start+count; j++ {
+			if minLoc == -1 {
+				minLoc = h.ToLocation(j)
+			} else {
+				// old logic was bad because it was trying to make a HUGE slice which was slowing things down
+				// much better to be not lame and just check minimum as we get to it
+				minLoc = min(minLoc, h.ToLocation(j))
+			}
+		}
+	}
+
+	return fmt.Sprint(minLoc), nil
 }
 
 func parse(input string) ([]string, holder2) {
@@ -235,12 +253,10 @@ type holder2 struct {
 	humidToLoc   []mapping
 }
 
-func (h holder2) ToLocation(in string) int {
-	sn, _ := strconv.Atoi(in)
-
-	soil := sn
+func (h holder2) ToLocation(in int) int {
+	soil := in
 	for _, m := range h.seedToSoil {
-		r, ok := m.checkMap(sn)
+		r, ok := m.checkMap(in)
 		if ok {
 			soil = r
 			break
