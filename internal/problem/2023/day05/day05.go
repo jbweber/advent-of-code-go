@@ -44,14 +44,14 @@ func part2(input string) (string, error) {
 	return "", nil
 }
 
-func parse(input string) ([]string, holder) {
+func parse(input string) ([]string, holder2) {
 	lines := strings.Split(input, "\n")
 
 	seeds := strings.Fields(strings.Split(lines[0], ":")[1])
 
 	nextData := 3
 	var seedToSoil []mapping
-	seedToSoil2 := map[string]string{}
+
 	for i := nextData; i < len(lines); i++ {
 		if lines[i] == "" {
 			nextData = i + 2
@@ -69,20 +69,19 @@ func parse(input string) ([]string, holder) {
 			RangeLength:           c,
 		})
 
-		for j := 0; j < c; j++ {
-			seedToSoil2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		}
+		//for j := 0; j < c; j++ {
+		//	seedToSoil2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
+		//}
 	}
 
 	var soilToFertilizer []mapping
-	soilToFertilizer2 := map[string]string{}
+
 	for i := nextData; i < len(lines); i++ {
 		if lines[i] == "" {
 			nextData = i + 2
 			break
 		}
 
-		fmt.Println(lines[i])
 		data := strings.Fields(lines[i])
 		a, _ := strconv.Atoi(data[0])
 		b, _ := strconv.Atoi(data[1])
@@ -94,13 +93,13 @@ func parse(input string) ([]string, holder) {
 			RangeLength:           c,
 		})
 
-		for j := 0; j < c; j++ {
-			soilToFertilizer2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		}
+		//for j := 0; j < c; j++ {
+		//	soilToFertilizer2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
+		//}
 	}
 
 	var fertilizerToWater []mapping
-	fertilizerToWater2 := map[string]string{}
+
 	for i := nextData; i < len(lines); i++ {
 		if lines[i] == "" {
 			nextData = i + 2
@@ -118,13 +117,10 @@ func parse(input string) ([]string, holder) {
 			RangeLength:           c,
 		})
 
-		for j := 0; j < c; j++ {
-			fertilizerToWater2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		}
 	}
 
 	var waterToLight []mapping
-	waterToLight2 := map[string]string{}
+
 	for i := nextData; i < len(lines); i++ {
 		if lines[i] == "" {
 			nextData = i + 2
@@ -142,13 +138,10 @@ func parse(input string) ([]string, holder) {
 			RangeLength:           c,
 		})
 
-		for j := 0; j < c; j++ {
-			waterToLight2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		}
 	}
 
 	var lightToTemp []mapping
-	lightToTemp2 := map[string]string{}
+
 	for i := nextData; i < len(lines); i++ {
 		if lines[i] == "" {
 			nextData = i + 2
@@ -166,13 +159,10 @@ func parse(input string) ([]string, holder) {
 			RangeLength:           c,
 		})
 
-		for j := 0; j < c; j++ {
-			lightToTemp2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		}
 	}
 
 	var tempToHumidity []mapping
-	tempToHumidity2 := map[string]string{}
+
 	for i := nextData; i < len(lines); i++ {
 		if lines[i] == "" {
 			nextData = i + 2
@@ -189,13 +179,11 @@ func parse(input string) ([]string, holder) {
 			SourceRangeStart:      b,
 			RangeLength:           c,
 		})
-		for j := 0; j < c; j++ {
-			tempToHumidity2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		}
+
 	}
 
 	var humidityToLocation []mapping
-	humidityToLocation2 := map[string]string{}
+
 	for i := nextData; i < len(lines); i++ {
 		if lines[i] == "" {
 			nextData = i + 2
@@ -212,12 +200,10 @@ func parse(input string) ([]string, holder) {
 			SourceRangeStart:      b,
 			RangeLength:           c,
 		})
-		for j := 0; j < c; j++ {
-			humidityToLocation2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		}
+
 	}
 
-	return seeds, holder{seedToSoil2, soilToFertilizer2, fertilizerToWater2, waterToLight2, lightToTemp2, tempToHumidity2, humidityToLocation2}
+	return seeds, holder2{seedToSoil, soilToFertilizer, fertilizerToWater, waterToLight, lightToTemp, tempToHumidity, humidityToLocation}
 }
 
 type mapping struct {
@@ -226,53 +212,94 @@ type mapping struct {
 	RangeLength           int
 }
 
-type holder struct {
-	seedToSoil   map[string]string
-	soilToFert   map[string]string
-	fertToWater  map[string]string
-	waterToLight map[string]string
-	lightToTemp  map[string]string
-	tempToHumid  map[string]string
-	humidToLoc   map[string]string
+// in = 57
+// 57 >= 50 && 57 <= 98
+// 98-57 =
+
+func (m mapping) checkMap(in int) (int, bool) {
+	if in >= m.SourceRangeStart && in <= m.SourceRangeStart+m.RangeLength {
+		mappedTo := (in - m.SourceRangeStart) + m.DestinationRangeStart
+		return mappedTo, true
+	}
+
+	return -1, false
 }
 
-func (h holder) ToLocation(in string) int {
-	soil, ok := h.seedToSoil[in]
-	if !ok {
-		soil = in
+type holder2 struct {
+	seedToSoil   []mapping
+	soilToFert   []mapping
+	fertToWater  []mapping
+	waterToLight []mapping
+	lightToTemp  []mapping
+	tempToHumid  []mapping
+	humidToLoc   []mapping
+}
+
+func (h holder2) ToLocation(in string) int {
+	sn, _ := strconv.Atoi(in)
+
+	soil := sn
+	for _, m := range h.seedToSoil {
+		r, ok := m.checkMap(sn)
+		if ok {
+			soil = r
+			break
+		}
 	}
 
-	fert, ok := h.soilToFert[soil]
-	if !ok {
-		fert = soil
+	fert := soil
+	for _, m := range h.soilToFert {
+		r, ok := m.checkMap(soil)
+		if ok {
+			fert = r
+			break
+		}
 	}
 
-	water, ok := h.fertToWater[fert]
-	if !ok {
-		water = fert
+	water := fert
+	for _, m := range h.fertToWater {
+		r, ok := m.checkMap(fert)
+		if ok {
+			water = r
+			break
+		}
 	}
 
-	light, ok := h.waterToLight[water]
-	if !ok {
-		light = water
+	light := water
+	for _, m := range h.waterToLight {
+		r, ok := m.checkMap(water)
+		if ok {
+			light = r
+			break
+		}
 	}
 
-	temp, ok := h.lightToTemp[light]
-	if !ok {
-		temp = light
+	temp := light
+	for _, m := range h.lightToTemp {
+		r, ok := m.checkMap(light)
+		if ok {
+			temp = r
+			break
+		}
 	}
 
-	humid, ok := h.tempToHumid[temp]
-	if !ok {
-		humid = temp
+	humid := temp
+	for _, m := range h.tempToHumid {
+		r, ok := m.checkMap(temp)
+		if ok {
+			humid = r
+			break
+		}
 	}
 
-	loc, ok := h.humidToLoc[humid]
-	if !ok {
-		loc = humid
+	loc := humid
+	for _, m := range h.humidToLoc {
+		r, ok := m.checkMap(humid)
+		if ok {
+			loc = r
+			break
+		}
 	}
 
-	l, _ := strconv.Atoi(loc)
-
-	return l
+	return loc
 }
