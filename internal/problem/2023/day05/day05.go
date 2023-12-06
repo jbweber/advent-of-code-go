@@ -27,8 +27,7 @@ func part1(input string) (string, error) {
 
 	var locs []int
 	for _, seed := range seeds {
-		s, _ := strconv.Atoi(seed)
-		locs = append(locs, h.ToLocation(s))
+		locs = append(locs, h.ToLocation(seed))
 	}
 
 	lowest := -1
@@ -46,8 +45,8 @@ func part2(input string) (string, error) {
 
 	minLoc := -1
 	for i := 0; i < len(seeds); i += 2 {
-		start, _ := strconv.Atoi(seeds[i])
-		count, _ := strconv.Atoi(seeds[i+1])
+		start := seeds[i]
+		count := seeds[i+1]
 		for j := start; j < start+count; j++ {
 			if minLoc == -1 {
 				minLoc = h.ToLocation(j)
@@ -62,10 +61,16 @@ func part2(input string) (string, error) {
 	return fmt.Sprint(minLoc), nil
 }
 
-func parse(input string) ([]string, holder2) {
+func parse(input string) ([]int, holder2) {
 	lines := strings.Split(input, "\n")
 
 	seeds := strings.Fields(strings.Split(lines[0], ":")[1])
+
+	var seedsInt []int
+	for _, seed := range seeds {
+		s, _ := strconv.Atoi(seed)
+		seedsInt = append(seedsInt, s)
+	}
 
 	nextData := 3
 	var seedToSoil []mapping
@@ -86,10 +91,6 @@ func parse(input string) ([]string, holder2) {
 			SourceRangeStart:      b,
 			RangeLength:           c,
 		})
-
-		//for j := 0; j < c; j++ {
-		//	seedToSoil2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		//}
 	}
 
 	var soilToFertilizer []mapping
@@ -110,10 +111,6 @@ func parse(input string) ([]string, holder2) {
 			SourceRangeStart:      b,
 			RangeLength:           c,
 		})
-
-		//for j := 0; j < c; j++ {
-		//	soilToFertilizer2[strconv.Itoa(b+j)] = strconv.Itoa(a + j)
-		//}
 	}
 
 	var fertilizerToWater []mapping
@@ -221,7 +218,7 @@ func parse(input string) ([]string, holder2) {
 
 	}
 
-	return seeds, holder2{seedToSoil, soilToFertilizer, fertilizerToWater, waterToLight, lightToTemp, tempToHumidity, humidityToLocation}
+	return seedsInt, holder2{seedToSoil, soilToFertilizer, fertilizerToWater, waterToLight, lightToTemp, tempToHumidity, humidityToLocation}
 }
 
 type mapping struct {
