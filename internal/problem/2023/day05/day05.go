@@ -14,7 +14,7 @@ func Execute(input string) (string, string, error) {
 		return internal.ReturnError(err)
 	}
 
-	result2, err := part2(input)
+	result2, err := part3(input)
 	if err != nil {
 		return internal.ReturnError(err)
 	}
@@ -59,6 +59,144 @@ func part2(input string) (string, error) {
 	}
 
 	return fmt.Sprint(minLoc), nil
+}
+
+func part3(input string) (string, error) {
+	seeds, mappingStack := parse2(input)
+
+	results := RangeToLocation(seeds, mappingStack)
+
+	minVal := results[0].Start
+
+	for _, result := range results {
+		minVal = min(minVal, result.Start)
+	}
+
+	return fmt.Sprint(minVal), nil
+}
+
+func RangeToLocation(in []internal.Range, mappingStack [][]mapping) []internal.Range {
+	for _, stack := range mappingStack {
+		in = doMapping(in, stack)
+	}
+
+	return in
+}
+
+//func RangeToLocation(r1 internal.Range, stack [][]mapping, queue chan internal.Range) internal.Range {
+//	var results []internal.Range
+//
+//	for _, ms := range stack {
+//		result := doMapping([]internal.Range{r1}, ms)
+//		//for _, s := range ms {
+//		//	r2 := internal.Range{Start: s.SourceRangeStart, End: s.SourceRangeStart + s.RangeLength}
+//		//
+//		//	rOut, leftovers, overlap := internal.FindPartialIntersection(r1, r2)
+//		//	if !overlap {
+//		//		fmt.Println(r1, r2, rOut, leftovers, overlap)
+//		//		continue
+//		//	}
+//		//
+//		//	os := (rOut.Start - s.SourceRangeStart) + s.DestinationRangeStart
+//		//	oe := (rOut.End - s.SourceRangeStart) + s.DestinationRangeStart
+//		//
+//		//	r1 = internal.Range{Start: os, End: oe}
+//		//
+//		//	fmt.Println(r1, r2, rOut, leftovers, overlap)
+//		//	for _, leftover := range leftovers {
+//		//		queue <- leftover
+//		//	}
+//		//	break
+//		//}
+//	}
+//
+//	return r1
+//}
+
+func doMapping(in []internal.Range, stack []mapping) []internal.Range {
+	queue := make(chan internal.Range, len(in)*10)
+	for _, seed := range in {
+		queue <- seed
+	}
+
+	var results []internal.Range
+
+	for len(queue) > 0 {
+		seed, ok := <-queue
+		if !ok {
+			fmt.Println("queue is empty")
+			break
+		}
+
+		for _, s := range stack {
+			r2 := internal.Range{Start: s.SourceRangeStart, End: s.SourceRangeStart + s.RangeLength}
+
+			rOut, leftovers, overlap := internal.FindPartialIntersection(seed, r2)
+			// no mapping has happened
+			if !overlap {
+				continue
+			}
+
+			os := (rOut.Start - s.SourceRangeStart) + s.DestinationRangeStart
+			oe := (rOut.End - s.SourceRangeStart) + s.DestinationRangeStart
+
+			seed = internal.Range{Start: os, End: oe}
+
+			for _, leftover := range leftovers {
+				queue <- leftover
+			}
+			break
+		}
+
+		results = append(results, seed)
+	}
+
+	return results
+}
+
+func parse2(input string) ([]internal.Range, [][]mapping) {
+	lines := strings.Split(input, "\n")
+
+	seedsFields := strings.Fields(strings.Split(lines[0], ":")[1])
+
+	var seeds []internal.Range
+	for i := 0; i < len(seedsFields); i += 2 {
+		s, _ := strconv.Atoi(seedsFields[i])
+		r, _ := strconv.Atoi(seedsFields[i+1])
+		seeds = append(seeds, internal.Range{Start: s, End: s + r})
+	}
+
+	var mappingStack [][]mapping
+
+	nextData := 3
+
+	cur := 0
+	for cur < len(lines) {
+		var curMapping []mapping
+		for i := nextData; i < len(lines); i++ {
+			if lines[i] == "" {
+				nextData = i + 2
+				break
+			}
+
+			data := strings.Fields(lines[i])
+			a, _ := strconv.Atoi(data[0])
+			b, _ := strconv.Atoi(data[1])
+			c, _ := strconv.Atoi(data[2])
+
+			curMapping = append(curMapping, mapping{
+				DestinationRangeStart: a,
+				SourceRangeStart:      b,
+				RangeLength:           c,
+			})
+
+			cur = i + 1
+		}
+
+		mappingStack = append(mappingStack, curMapping)
+	}
+
+	return seeds, mappingStack
 }
 
 func parse(input string) ([]int, holder2) {
