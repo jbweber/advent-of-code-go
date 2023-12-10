@@ -30,11 +30,7 @@ func part1(input string) (string, error) {
 		return "", err
 	}
 
-	fmt.Println(s)
-
-	n1, _, startShape := findStartPoints2(grid, s)
-
-	fmt.Println(startShape)
+	n1, _, _ := findStartPoints2(grid, s)
 
 	from := s
 	current := n1
@@ -197,5 +193,136 @@ func contains(in []rune, v rune) bool {
 }
 
 func part2(input string) (string, error) {
-	return "", nil
+	grid := strings.Split(input, "\n")
+
+	s, err := findStartLocation(grid)
+	if err != nil {
+		return "", err
+	}
+
+	n1, _, startShape := findStartPoints2(grid, s)
+
+	points := findShape(s, n1, grid)
+
+	line := grid[s.Y]
+	line = strings.Replace(line, "S", startShape, 1)
+	grid[s.Y] = line
+
+	count := countWraps(grid, points)
+
+	return fmt.Sprint(count), nil
+}
+
+func findShape(start, next Point, grid []string) []Point {
+	points := []Point{start, next}
+
+	from := start
+	current := next
+	count := 1
+	for {
+		next := findNext(from, current, grid)
+		from = current
+		current = next
+		count += 1
+		if next == start {
+			break
+		}
+		points = append(points, next)
+	}
+
+	return points
+}
+
+func drawGrid(grid []string) {
+	for _, line := range grid {
+		fmt.Println(line)
+	}
+}
+
+func countWraps(grid []string, points []Point) int {
+	count := 0
+	for y := len(grid) - 1; y >= 0; y-- {
+		crossed := 0
+		for x := len(grid[y]) - 1; x >= 0; x-- {
+			r := grid[y][x]
+			// we're using the idea of "winding number" and "ray casting"
+			// https://en.wikipedia.org/wiki/Point_in_polygon
+			if containsX(points, Point{X: x, Y: y}) {
+				if r == '|' || r == 'L' || r == 'J' {
+					crossed += 1
+				}
+				continue
+			}
+
+			if isOdd(crossed) {
+				count += 1
+			}
+
+		}
+	}
+
+	return count
+}
+
+func drawGrid2(grid []string, points []Point) {
+	for y, line := range grid {
+		for x, r := range line {
+			if containsX(points, Point{x, y}) {
+				fmt.Print("X")
+			} else {
+				fmt.Print(string(r))
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func drawGrid3(grid []string, points []Point, wrapMap map[string]int) {
+	for y, line := range grid {
+		for x, _ := range line {
+			if containsX(points, Point{x, y}) {
+				fmt.Print("X")
+			} else {
+				v, ok := wrapMap[fmt.Sprintf("%d-%d", x, y)]
+				if !ok {
+					panic("uhoh")
+				}
+				if isOdd(v) {
+					//fmt.Print("O")
+					fmt.Print(v)
+				} else {
+					fmt.Print(".")
+				}
+
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func drawGrid4(grid []string, mm map[string]int) {
+	for y, line := range grid {
+		for x, _ := range line {
+			v, ok := mm[fmt.Sprintf("%d-%d", x, y)]
+			if !ok {
+				fmt.Print(string(grid[y][x]))
+			} else {
+				fmt.Print(v)
+			}
+		}
+		fmt.Println()
+	}
+}
+
+func containsX[T comparable](elems []T, v T) bool {
+	for _, s := range elems {
+		if v == s {
+			return true
+		}
+	}
+	return false
+}
+
+func isOdd(n int) bool {
+	return n%2 == 1
 }
