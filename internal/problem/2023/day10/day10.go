@@ -1,6 +1,7 @@
 package day10
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -24,14 +25,16 @@ func Execute(input string) (string, string, error) {
 func part1(input string) (string, error) {
 	grid := strings.Split(input, "\n")
 
-	x, y := findStartLocation(grid)
-	fmt.Println(x, y)
+	s, err := findStartLocation(grid)
+	if err != nil {
+		return "", err
+	}
 
-	x1, y1, x2, y2 := findStartPoints(grid, x, y)
+	fmt.Println(s)
 
-	s := Point{X: x, Y: y}
-	n1 := Point{X: x1, Y: y1}
-	_ = Point{X: x2, Y: y2}
+	n1, _, startShape := findStartPoints2(grid, s)
+
+	fmt.Println(startShape)
 
 	from := s
 	current := n1
@@ -49,19 +52,16 @@ func part1(input string) (string, error) {
 	return fmt.Sprint(count / 2), nil
 }
 
-func findStartLocation(in []string) (int, int) {
-	y := 0
-	x := 0
-
+func findStartLocation(in []string) (Point, error) {
 	for i, line := range in {
 		if strings.Contains(line, "S") {
-			x = strings.Index(line, "S")
-			y = i
-			return x, y
+			x := strings.Index(line, "S")
+			y := i
+			return Point{X: x, Y: y}, nil
 		}
 	}
 
-	return -1, -1
+	return Point{}, errors.New("cannot find `S` shape in starting grid")
 }
 
 type Point struct {
@@ -130,56 +130,56 @@ func findNext(from Point, current Point, grid []string) Point {
 	return Point{}
 }
 
-func findStartPoints(grid []string, x, y int) (int, int, int, int) {
+func findStartPoints2(grid []string, start Point) (Point, Point, string) {
 	lenY := len(grid)
 	lenX := len(grid[0])
 
 	right, left, down, up := '.', '.', '.', '.'
 	// could be x+1, y
-	if x < lenX-1 {
-		right = rune(grid[y][x+1])
+	if start.X < lenX-1 {
+		right = rune(grid[start.Y][start.X+1])
 	}
 	// could be x-1, y
-	if x > 0 {
-		left = rune(grid[y][x-1])
+	if start.X > 0 {
+		left = rune(grid[start.Y][start.X-1])
 	}
 	// could be x, y+1
-	if y < lenY-1 {
-		down = rune(grid[y+1][x])
+	if start.Y < lenY-1 {
+		down = rune(grid[start.Y+1][start.X])
 	}
 	// could be x, y-1
-	if y > 0 {
-		up = rune(grid[y-1][x])
+	if start.Y > 0 {
+		up = rune(grid[start.Y-1][start.X])
 	}
 
 	// |
 	if contains([]rune{'|', 'F', '7'}, up) && contains([]rune{'|', 'L', 'J'}, down) {
-		return x, y + 1, x, y - 1
+		return Point{start.X, start.Y + 1}, Point{start.X, start.Y - 1}, "|"
 	}
 
 	// -
 	if contains([]rune{'-', 'F', 'L'}, left) && contains([]rune{'-', 'J', '7'}, right) {
-		return x - 1, y, x + 1, y
+		return Point{start.X - 1, start.Y}, Point{start.X + 1, start.Y}, "-"
 	}
 
 	// L
 	if contains([]rune{'|', 'F', '7'}, up) && contains([]rune{'-', 'J', '7'}, right) {
-		return x, y + 1, x + 1, y
+		return Point{start.X, start.Y + 1}, Point{start.X + 1, start.Y}, "L"
 	}
 
 	// J
 	if contains([]rune{'|', 'F', '7'}, up) && contains([]rune{'-', 'L', 'F'}, left) {
-		return x, y + 1, x - 1, y
+		return Point{start.X, start.Y + 1}, Point{start.X - 1, start.Y}, "J"
 	}
 
 	// 7
 	if contains([]rune{'-', 'F', 'L'}, left) && contains([]rune{'|', 'L', 'J'}, down) {
-		return x - 1, y, x, y - 1
+		return Point{start.X - 1, start.Y}, Point{start.X, start.Y - 1}, "7"
 	}
 
 	// F
 	if contains([]rune{'-', '7', 'J'}, right) && contains([]rune{'|', 'L', 'J'}, down) {
-		return x + 1, y, x, y - 1
+		return Point{start.X + 1, start.Y}, Point{start.X, start.Y - 1}, "F"
 	}
 
 	fmt.Println(string(right), string(left), string(down), string(up))
